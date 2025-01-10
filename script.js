@@ -2,28 +2,23 @@
 const ukPercentageThreshold = 5; // 5% UK followers
 const absoluteUKThreshold = 10000; // 10,000 UK followers
 const maxWeightedEngagement = 50; // Arbitrary max for weighted engagement
-const maxWeightedGrowth = 50; // Arbitrary max for weighted growth
 
 // Define weights for each metric
 const weights = {
-    uk_percentage: 0.25,
-    absolute_uk_followers: 0.25,
-    engagement_rate: 0.2,
-    follower_count: 0.2,
-    growth_rate: 0.1 // Adjust this weight as needed
+    uk_percentage: 0.3,
+    absolute_uk_followers: 0.3,
+    engagement_rate: 0.4
 };
 
-// Function to calculate the score
 function calculateScore() {
     // Get input values
     const followerCount = parseFloat(document.getElementById("follower_count").value);
     const ukPercentage = parseFloat(document.getElementById("uk_percentage").value);
     const engagementRate = parseFloat(document.getElementById("engagement_rate").value);
-    const growthRate = parseFloat(document.getElementById("growth_rate").value);
 
-    // Check if all fields have valid numbers
-    if (isNaN(followerCount) || isNaN(ukPercentage) || isNaN(engagementRate) || isNaN(growthRate)) {
-        document.getElementById("result").innerHTML = "<p>Please fill in all fields with valid numbers.</p>";
+    // Simple validation
+    if (isNaN(followerCount) || isNaN(ukPercentage) || isNaN(engagementRate)) {
+        alert("Please enter valid numbers in all fields.");
         return;
     }
 
@@ -32,24 +27,19 @@ function calculateScore() {
 
     // Normalize UK percentage
     const ukPercentageScore = Math.min(ukPercentage / ukPercentageThreshold, 1);
+
     // Normalize absolute UK followers
     const absoluteUKScore = Math.min(absoluteUKFollowers / absoluteUKThreshold, 1);
+
     // Weight engagement by platform size
     const weightedEngagementRate = engagementRate * Math.log10(followerCount);
     const engagementScore = Math.min(weightedEngagementRate / maxWeightedEngagement, 1);
-    // Logarithmic scaling for follower count
-    const followerScore = Math.log10(followerCount) / 10; // Scale to 0-1
-    // Weight growth rate by platform size
-    const weightedGrowthRate = growthRate * Math.log10(followerCount);
-    const growthScore = Math.min(weightedGrowthRate / maxWeightedGrowth, 1);
 
     // Calculate total score
     const normalizedScore = (
         weights.uk_percentage * ukPercentageScore +
         weights.absolute_uk_followers * absoluteUKScore +
-        weights.engagement_rate * engagementScore +
-        weights.follower_count * followerScore +
-        weights.growth_rate * growthScore
+        weights.engagement_rate * engagementScore
     );
 
     // Scale to 0–10
@@ -72,9 +62,3 @@ function calculateScore() {
         <p><strong>Absolute UK Followers:</strong> ${Math.round(absoluteUKFollowers)}</p>
     `;
 }
-
-// Add event listeners to input fields
-document.getElementById("follower_count").addEventListener("input", calculateScore);
-document.getElementById("uk_percentage").addEventListener("input", calculateScore);
-document.getElementById("engagement_rate").addEventListener("input", calculateScore);
-document.getElementById("growth_rate").addEventListener("input", calculateScore);
