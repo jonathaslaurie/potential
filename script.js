@@ -2,12 +2,14 @@
 const ukPercentageThreshold = 5; // 5% UK followers
 const absoluteUKThreshold = 10000; // 10,000 UK followers
 const maxWeightedEngagement = 50; // Arbitrary max for weighted engagement
+const maxWeightedGrowth = 50; // Arbitrary max for weighted growth
 
 // Define weights for each metric
 const weights = {
-    uk_percentage: 0.3,
-    absolute_uk_followers: 0.3,
-    engagement_rate: 0.4
+    uk_percentage: 0.25,
+    absolute_uk_followers: 0.25,
+    engagement_rate: 0.25,
+    growth_rate: 0.25 // Adjust this weight as needed
 };
 
 function calculateScore() {
@@ -15,9 +17,10 @@ function calculateScore() {
     const followerCount = parseFloat(document.getElementById("follower_count").value);
     const ukPercentage = parseFloat(document.getElementById("uk_percentage").value);
     const engagementRate = parseFloat(document.getElementById("engagement_rate").value);
+    const growthRate = parseFloat(document.getElementById("growth_rate").value);
 
     // Simple validation
-    if (isNaN(followerCount) || isNaN(ukPercentage) || isNaN(engagementRate)) {
+    if (isNaN(followerCount) || isNaN(ukPercentage) || isNaN(engagementRate) || isNaN(growthRate)) {
         alert("Please enter valid numbers in all fields.");
         return;
     }
@@ -35,11 +38,16 @@ function calculateScore() {
     const weightedEngagementRate = engagementRate * Math.log10(followerCount);
     const engagementScore = Math.min(weightedEngagementRate / maxWeightedEngagement, 1);
 
+    // Weight growth rate by platform size
+    const weightedGrowthRate = growthRate * Math.log10(followerCount);
+    const growthScore = Math.min(weightedGrowthRate / maxWeightedGrowth, 1);
+
     // Calculate total score
     const normalizedScore = (
         weights.uk_percentage * ukPercentageScore +
         weights.absolute_uk_followers * absoluteUKScore +
-        weights.engagement_rate * engagementScore
+        weights.engagement_rate * engagementScore +
+        weights.growth_rate * growthScore
     );
 
     // Scale to 0–10
