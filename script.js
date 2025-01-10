@@ -3,13 +3,15 @@ const ukPercentageThreshold = 5; // 5% UK followers
 const absoluteUKThreshold = 10000; // 10,000 UK followers
 const maxWeightedEngagement = 50; // Arbitrary max for weighted engagement
 const maxWeightedGrowth = 50; // Arbitrary max for weighted growth
+const bookSalesThresholds = [1000, 3000]; // Thresholds for book sales impact
 
 // Define weights for each metric
 const weights = {
-    uk_percentage: 0.25,
-    absolute_uk_followers: 0.25,
-    engagement_rate: 0.25,
-    growth_rate: 0.25 // Adjust this weight as needed
+    uk_percentage: 0.2,
+    absolute_uk_followers: 0.2,
+    engagement_rate: 0.2,
+    growth_rate: 0.2,
+    book_sales: 0.2 // Adjust this weight as needed
 };
 
 function calculateScore() {
@@ -19,9 +21,10 @@ function calculateScore() {
     const ukPercentage = parseFloat(document.getElementById("uk_percentage").value);
     const engagementRate = parseFloat(document.getElementById("engagement_rate").value);
     const growthRate = parseFloat(document.getElementById("growth_rate").value);
+    const bookSales = parseFloat(document.getElementById("book_sales").value);
 
     // Simple validation
-    if (!influencerName || isNaN(followerCount) || isNaN(ukPercentage) || isNaN(engagementRate) || isNaN(growthRate)) {
+    if (!influencerName || isNaN(followerCount) || isNaN(ukPercentage) || isNaN(engagementRate) || isNaN(growthRate) || isNaN(bookSales)) {
         alert("Please enter valid information in all fields.");
         return;
     }
@@ -43,12 +46,21 @@ function calculateScore() {
     const weightedGrowthRate = growthRate * Math.log10(followerCount);
     const growthScore = Math.min(weightedGrowthRate / maxWeightedGrowth, 1);
 
+    // Calculate book sales impact
+    let bookSalesScore = 0;
+    if (bookSales > bookSalesThresholds[1]) {
+        bookSalesScore = 1; // Huge impact
+    } else if (bookSales > bookSalesThresholds[0]) {
+        bookSalesScore = 0.75; // Significant impact
+    } // Less than or equal to 1000 results in no impact (score = 0)
+
     // Calculate total score
     const normalizedScore = (
         weights.uk_percentage * ukPercentageScore +
         weights.absolute_uk_followers * absoluteUKScore +
         weights.engagement_rate * engagementScore +
-        weights.growth_rate * growthScore
+        weights.growth_rate * growthScore +
+        weights.book_sales * bookSalesScore
     );
 
     // Scale to 0–10
@@ -66,9 +78,6 @@ function calculateScore() {
 
     // Display the results
     document.getElementById("result").innerHTML = `
-        <p><strong>Influencer Name:</strong> ${influencerName}</p>
-        <p><strong>Calculated Score:</strong> ${finalScore} / 10</p>
-        <p><strong>Rating:</strong> ${ratingDescription}</p>
-        <p><strong>Absolute UK Followers:</strong> ${Math.round(absoluteUKFollowers)}</p>
-    `;
-}
+       
+::contentReference[oaicite:0]{index=0}
+ 
