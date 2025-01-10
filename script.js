@@ -3,7 +3,7 @@ const ukPercentageThreshold = 5; // 5% UK followers
 const absoluteUKThreshold = 10000; // 10,000 UK followers
 const maxWeightedEngagement = 50; // Arbitrary max for weighted engagement
 const maxWeightedGrowth = 50; // Arbitrary max for weighted growth
-const bookSalesThresholds = [1000, 3000]; // Thresholds for book sales impact
+const bookSalesThreshold = 1000; // Threshold for book sales impact
 
 // Define weights for each metric
 const weights = {
@@ -46,13 +46,8 @@ function calculateScore() {
     const weightedGrowthRate = growthRate * Math.log10(followerCount);
     const growthScore = Math.min(weightedGrowthRate / maxWeightedGrowth, 1);
 
-    // Calculate book sales impact
-    let bookSalesScore = 0;
-    if (bookSales > bookSalesThresholds[1]) {
-        bookSalesScore = 1; // Huge impact
-    } else if (bookSales > bookSalesThresholds[0]) {
-        bookSalesScore = 0.75; // Significant impact
-    } // Less than or equal to 1000 results in no impact (score = 0)
+    // Determine book sales impact
+    const bookSalesScore = bookSales > bookSalesThreshold ? 1 : 0;
 
     // Calculate total score
     const normalizedScore = (
@@ -78,6 +73,9 @@ function calculateScore() {
 
     // Display the results
     document.getElementById("result").innerHTML = `
-       
+        <p><strong>Influencer Name:</strong> ${influencerName}</p>
+        <p><strong>Calculated Score:</strong> ${finalScore} / 10</p>
+        <p><strong>Rating:</strong> ${ratingDescription}</p>
+        <p><strong>
 ::contentReference[oaicite:0]{index=0}
  
