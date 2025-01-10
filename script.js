@@ -13,8 +13,68 @@ const weights = {
     growth_rate: 0.1 // Adjust this weight as needed
 };
 
+// Function to calculate the score
 function calculateScore() {
     // Get input values
     const followerCount = parseFloat(document.getElementById("follower_count").value);
     const ukPercentage = parseFloat(document.getElementById("uk_percentage").value);
-    const engagementRate = parseFloat
+    const engagementRate = parseFloat(document.getElementById("engagement_rate").value);
+    const growthRate = parseFloat(document.getElementById("growth_rate").value);
+
+    // Check if all fields have valid numbers
+    if (isNaN(followerCount) || isNaN(ukPercentage) || isNaN(engagementRate) || isNaN(growthRate)) {
+        document.getElementById("result").innerHTML = "<p>Please fill in all fields with valid numbers.</p>";
+        return;
+    }
+
+    // Calculate absolute UK followers
+    const absoluteUKFollowers = (followerCount * ukPercentage) / 100;
+
+    // Normalize UK percentage
+    const ukPercentageScore = Math.min(ukPercentage / ukPercentageThreshold, 1);
+    // Normalize absolute UK followers
+    const absoluteUKScore = Math.min(absoluteUKFollowers / absoluteUKThreshold, 1);
+    // Weight engagement by platform size
+    const weightedEngagementRate = engagementRate * Math.log10(followerCount);
+    const engagementScore = Math.min(weightedEngagementRate / maxWeightedEngagement, 1);
+    // Logarithmic scaling for follower count
+    const followerScore = Math.log10(followerCount) / 10; // Scale to 0-1
+    // Weight growth rate by platform size
+    const weightedGrowthRate = growthRate * Math.log10(followerCount);
+    const growthScore = Math.min(weightedGrowthRate / maxWeightedGrowth, 1);
+
+    // Calculate total score
+    const normalizedScore = (
+        weights.uk_percentage * ukPercentageScore +
+        weights.absolute_uk_followers * absoluteUKScore +
+        weights.engagement_rate * engagementScore +
+        weights.follower_count * followerScore +
+        weights.growth_rate * growthScore
+    );
+
+    // Scale to 0–10
+    const finalScore = (normalizedScore * 10).toFixed(1);
+
+    // Add explanatory text
+    let ratingDescription;
+    if (finalScore >= 8) {
+        ratingDescription = "Highly Impressive";
+    } else if (finalScore >= 5) {
+        ratingDescription = "Moderate Potential";
+    } else {
+        ratingDescription = "Needs Improvement";
+    }
+
+    // Display the results
+    document.getElementById("result").innerHTML = `
+        <p><strong>Calculated Score:</strong> ${finalScore} / 10</p>
+        <p><strong>Rating:</strong> ${ratingDescription}</p>
+        <p><strong>Absolute UK Followers:</strong> ${Math.round(absoluteUKFollowers)}</p>
+    `;
+}
+
+// Add event listeners to input fields
+document.getElementById("follower_count").addEventListener("input", calculateScore);
+document.getElementById("uk_percentage").addEventListener("input", calculateScore);
+document.getElementById("engagement_rate").addEventListener("input", calculateScore);
+document.getElementById("growth_rate").addEventListener("input", calculateScore);
