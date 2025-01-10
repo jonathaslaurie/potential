@@ -14,14 +14,15 @@ const weights = {
 
 function calculateScore() {
     // Get input values
+    const influencerName = document.getElementById("influencer_name").value.trim();
     const followerCount = parseFloat(document.getElementById("follower_count").value);
     const ukPercentage = parseFloat(document.getElementById("uk_percentage").value);
     const engagementRate = parseFloat(document.getElementById("engagement_rate").value);
     const growthRate = parseFloat(document.getElementById("growth_rate").value);
 
     // Simple validation
-    if (isNaN(followerCount) || isNaN(ukPercentage) || isNaN(engagementRate) || isNaN(growthRate)) {
-        alert("Please enter valid numbers in all fields.");
+    if (!influencerName || isNaN(followerCount) || isNaN(ukPercentage) || isNaN(engagementRate) || isNaN(growthRate)) {
+        alert("Please enter valid information in all fields.");
         return;
     }
 
@@ -65,6 +66,7 @@ function calculateScore() {
 
     // Display the results
     document.getElementById("result").innerHTML = `
+        <p><strong>Influencer Name:</strong> ${influencerName}</p>
         <p><strong>Calculated Score:</strong> ${finalScore} / 10</p>
         <p><strong>Rating:</strong> ${ratingDescription}</p>
         <p><strong>Absolute UK Followers:</strong> ${Math.round(absoluteUKFollowers)}</p>
