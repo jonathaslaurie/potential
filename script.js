@@ -15,6 +15,9 @@ const weights = {
 function calculateScore() {
     // Get input values
     const influencerName = document.getElementById("influencer_name").value.trim();
+    const url = document.getElementById("url").value.trim();
+    const description = document.getElementById("description").value.trim();
+    const idea = document.getElementById("idea").value.trim();
     const followerCount = parseFloat(document.getElementById("follower_count").value);
     const ukPercentage = parseFloat(document.getElementById("uk_percentage").value);
     const engagementRate = parseFloat(document.getElementById("engagement_rate").value);
@@ -64,11 +67,39 @@ function calculateScore() {
         ratingDescription = "Needs Improvement";
     }
 
-    // Display the results
+    // Generate plain text output
+    const plainText = `
+Influencer Scoring Tool Results:
+--------------------------------
+Influencer Name: ${influencerName}
+URL: ${url}
+Description: ${description}
+Idea: ${idea}
+
+Total Followers: ${followerCount}
+UK Percentage: ${ukPercentage}%
+Engagement Rate: ${engagementRate}%
+Follower Growth Rate: ${growthRate}%
+
+Absolute UK Followers: ${Math.round(absoluteUKFollowers)}
+Calculated Score: ${finalScore} / 10
+Rating: ${ratingDescription}
+--------------------------------
+    `.trim();
+
+    // Display results in HTML
     document.getElementById("result").innerHTML = `
-        <p><strong>Influencer Name:</strong> ${influencerName}</p>
-        <p><strong>Calculated Score:</strong> ${finalScore} / 10</p>
-        <p><strong>Rating:</strong> ${ratingDescription}</p>
-        <p><strong>Absolute UK Followers:</strong> ${Math.round(absoluteUKFollowers)}</p>
+        <pre>${plainText}</pre>
+        <button onclick="copyToClipboard()">Copy to Clipboard</button>
     `;
+}
+
+// Function to copy plain text to clipboard
+function copyToClipboard() {
+    const resultText = document.querySelector("#result pre").innerText;
+    navigator.clipboard.writeText(resultText).then(() => {
+        alert("Results copied to clipboard!");
+    }).catch(err => {
+        alert("Failed to copy text: " + err);
+    });
 }
